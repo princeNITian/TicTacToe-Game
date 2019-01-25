@@ -1,6 +1,8 @@
 package example.com.prince.tictactoe;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
+    int count = 0;
 
     public void BuClick(View view) {
         Button buSelected = (Button) view;
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     int ActivePlayer = 1;
+
     ArrayList<Integer> Player1 = new ArrayList<Integer>();
     ArrayList<Integer> Player2 = new ArrayList<Integer>();
     void PlayGame(int CellID,Button button){
@@ -66,15 +70,34 @@ public class MainActivity extends AppCompatActivity {
             button.setBackgroundColor(Color.GREEN);
             Player1.add(CellID);
             ActivePlayer = 2;
+            count++;
         }
         else if(ActivePlayer == 2){
             button.setText("O");
-            button.setBackgroundColor(Color.BLUE);
+            button.setBackgroundColor(Color.YELLOW);
             Player2.add(CellID);
             ActivePlayer = 1;
+            count++;
         }
         button.setEnabled(false);
         CheckWinner();
+    }
+
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//
+//    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     void CheckWinner(){
@@ -138,13 +161,41 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Decide Winner
-        if(Winner!=-1){
-            if(Winner==1)
-                Toast.makeText(this,"Player 1 is Winner!",Toast.LENGTH_LONG).show();
-            else
-                Toast.makeText(this,"Player 2 is Winner!",Toast.LENGTH_LONG).show();
+        if(Winner!=-1) {
+            if (Winner == 1) {
+                //Toast.makeText(this,"Player 1 is Winner!",Toast.LENGTH_LONG).show();
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                alertDialog.setTitle("Winner");
+                alertDialog.setMessage("Player 1 is Winner!");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+                onDestroy();
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                alertDialog.setTitle("Winner");
+                alertDialog.setMessage("Player 2 is Winner!");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+                onDestroy();
+            }
 
+        }
+        // Game Over
+        if(count==9){
+            Toast.makeText(this,"GAME OVER",Toast.LENGTH_LONG).show();
         }
 
     }
+
+
 }
